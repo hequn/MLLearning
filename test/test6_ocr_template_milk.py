@@ -1,24 +1,4 @@
-'''The MIT License (MIT)
-
-Copyright (c) 2017 Dhanushka Dangampola
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.'''
+'''OCR TEMPLATE '''
 
 from imutils import contours
 import numpy as np
@@ -30,7 +10,7 @@ import keras
 from keras.models import Model,Sequential
 
 
-large = cv2.imread('../images/test-account/test5.jpg')
+large = cv2.imread('../images/test-digital/test5.jpg')
 rgb = imutils.resize(large, width=1920)#cv2.pyrDown(large)
 # small = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
 # cv2.imshow("Image1", small)
@@ -61,6 +41,7 @@ cv2.waitKey(1000)
 
 # cv2.imshow("Image5", connected)
 # cv2.waitKey(1000)
+
 # using RETR_EXTERNAL instead of RETR_CCOMP
 trans = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
 cnts = cv2.findContours(threshold_img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -104,24 +85,23 @@ for (i, (gX, gY, gW, gH)) in enumerate(locs):
     group = cv2.filter2D(group, -1, kernel=kernel_filter)
     kernel = np.ones((2, 2), np.uint8)
     group = cv2.erode(group, kernel, iterations=3)
-    # 定义旋转rotate函数
+    # rotate func
     def rotate(image, angle, center=None, scale=1.0):
-        # 获取图像尺寸
+        # get the size
         (h, w) = image.shape[:2]
 
-        # 若未指定旋转中心，则将图像中心设为旋转中心
+        # if no center w h should be used
         if center is None:
             center = (w / 2, h / 2)
 
-        # 执行旋转
+        # rotate it
         M = cv2.getRotationMatrix2D(center, angle, scale)
         rotated = cv2.warpAffine(image, M, (w, h))
-
-        # 返回旋转后的图像
         return rotated
 
     group = rotate(group,5)
     # group = cv2.threshold(group, 140, 255, cv2.THRESH_BINARY_INV)[1]
+    # group = cv2.Laplacian(group, cv2.CV_64F)
     cv2.imshow('rects1', group)
     cv2.waitKey(1000)
     print(pytesseract.image_to_string(group,lang='eng', boxes=False,config='-c tessedit_char_whitelist=0123456789 -psm 6'))
@@ -135,7 +115,7 @@ for (i, (gX, gY, gW, gH)) in enumerate(locs):
                                    method="left-to-right")[0]
 
     predicts = []
-    model = keras.models.load_model('../images/test-account/fine-tuned-mnist-weights.h5')
+    model = keras.models.load_model('../images/test-digital/fine-tuned-mnist-weights.h5')
     # loop over the digit contours
     for c in digitCnts:
         # compute the bounding box of the individual digit, extract

@@ -8,9 +8,9 @@ import cv2
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=False,
-	help="path to input image", default='../images/test-account/card2.jpg')
+	help="path to input image", default='../images/test-digital/card2.jpg')
 ap.add_argument("-r", "--reference", required=False,
-	help="path to reference OCR-A image", default='../images/test-account/refer.jpg')
+	help="path to reference OCR-A image", default='../images/test-digital/refer.jpg')
 args = vars(ap.parse_args())
 
 # define a dictionary that maps the first digit of a credit card
