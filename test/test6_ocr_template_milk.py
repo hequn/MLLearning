@@ -119,6 +119,7 @@ for (i, (gX, gY, gW, gH)) in enumerate(locs):
                                        method="left-to-right")[0]
 
     predicts = []
+    roi_hog_fds = []
     model = keras.models.load_model('../images/test-digital/fine-tuned-mnist-weights.h5')
     # Load the classifier
     clf = joblib.load("digits_cls.pkl")
@@ -146,11 +147,12 @@ for (i, (gX, gY, gW, gH)) in enumerate(locs):
         cv2.imshow('rects', roi)
         cv2.waitKey(1000)
         roi_hog_fd = hog(roi, orientations=9, pixels_per_cell=(14, 14), cells_per_block=(1, 1), visualise=False)
-        nbr = clf.predict(np.array([roi_hog_fd], 'float64'))
-        print(nbr)
-        #native_digital_al(roi)
-        predicts.append(np.array(roi).reshape((28 * 28)))
+        roi_hog_fds.append(roi_hog_fd)
+        # native_digital_al(roi)
+        predicts.append(np.array(roi).reshape((28, 28, 1)))
 
+    nbr = clf.predict(np.array(roi_hog_fds, 'float64'))
+    print(nbr)
     predicts = np.asarray(predicts) / 255.
     result = model.predict(predicts)
     print('keras: ', np.argmax(result, axis=1))
