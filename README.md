@@ -19,7 +19,6 @@
 + Pillow
 + imutils
 + scikit-image
-+ 
 + Others: (install with anaconda and please install according to the notice hhhha)
 ```
 e.g.
