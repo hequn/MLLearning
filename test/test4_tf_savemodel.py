@@ -25,7 +25,7 @@ with tf.Session(graph=tf.Graph()) as sess:
     print(sess.run(op1, feed_dict))
 
     # 写入序列化的 PB 文件
-    with tf.gfile.FastGFile(pb_file_path + 'model.pb', mode='wb') as f:
+    with tf.gfile.FastGFile(pb_file_path + '/model.pb', mode='wb') as f:
         f.write(constant_graph.SerializeToString())
 
     # INFO:tensorflow:Froze 1 variables.
@@ -34,7 +34,7 @@ with tf.Session(graph=tf.Graph()) as sess:
 
 
     # 官网有误，写成了 saved_model_builder
-    builder = tf.saved_model.builder.SavedModelBuilder(pb_file_path + 'savemodel')
+    builder = tf.saved_model.builder.SavedModelBuilder(pb_file_path + '/savemodel')
     # 构造模型保存的内容，指定要保存的 session，特定的 tag,
     # 输入输出信息字典，额外的信息
     builder.add_meta_graph_and_variables(sess,
@@ -49,7 +49,7 @@ with tf.Session(graph=tf.Graph()) as sess:
 builder.save()  # 保存 PB 模型
 
 with tf.Session(graph=tf.Graph()) as sess:
-    tf.saved_model.loader.load(sess, ['cpu_server_1'], pb_file_path+'savemodel')
+    tf.saved_model.loader.load(sess, ['cpu_server_1'], pb_file_path+'/savemodel')
     sess.run(tf.global_variables_initializer())
 
     input_x = sess.graph.get_tensor_by_name('x:0')
